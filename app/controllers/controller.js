@@ -4,15 +4,17 @@ const Receipt = db.receipts;
 // Create and Save a new Receipt
 exports.create = (req, res) => {
   // Validate request
-  if (!req.body.title) {
+  if (!req.body.shop_name) {
     res.status(400).send({ message: "Content can not be empty!" });
     return;
   }
 
   // Create a Receipt
   const receipt = new Receipt({
-    title: req.body.title,
-    description: req.body.description,
+    shop_name: req.body.shop_name,
+    item1: req.body.item1,
+    item2: req.body.item2,
+    item3: req.body.item3,
     published: req.body.published ? req.body.published : false
   });
 
@@ -32,8 +34,8 @@ exports.create = (req, res) => {
 
 // Retrieve all Receipt from the database.
 exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+  const shop_name = req.query.shop_name;
+  var condition = shop_name ? { shop_name: { $regex: new RegExp(shop_name), $options: "i" } } : {};
 
   Receipt.find(condition)
     .then(data => {
