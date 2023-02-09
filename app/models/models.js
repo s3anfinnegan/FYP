@@ -7,6 +7,7 @@ module.exports = mongoose => {
       item1: String,
       item2: String,
       item3: String,
+      cashier: String,
       published: Boolean
     },
     { timestamps: true }

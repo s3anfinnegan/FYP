@@ -15,6 +15,7 @@ exports.create = (req, res) => {
     item1: req.body.item1,
     item2: req.body.item2,
     item3: req.body.item3,
+    cashier: req.body.cashier,
     published: req.body.published ? req.body.published : false
   });
 
