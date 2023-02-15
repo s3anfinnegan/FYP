@@ -1,5 +1,6 @@
 const db = require("../models");
 const Receipt = db.receipts;
+const QRCode = require('qrcode');
 
 // Create and Save a new Receipt
 exports.create = (req, res) => {
@@ -18,6 +19,17 @@ exports.create = (req, res) => {
     cashier: req.body.cashier,
     published: req.body.published ? req.body.published : false
   });
+
+  // Create a QR Code
+  /**const qrCodeData = req.body._id.toString(); // Use the Receipt's Object ID as the QR code data
+  QRCode.toDataURL(qrCodeData, function (err, qrCodeUrl) {
+    if (err) {
+      console.error(err);
+      return res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the QR Code."
+      });
+    }**/
 
   // Save Receipt in the database
   receipt

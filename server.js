@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Expense data goes here..." });
+  res.json({ message: "Go to /api/receipts to view data as JSON" });
 });
 
 require("./app/routes/routes")(app);
