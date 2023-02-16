@@ -5,9 +5,6 @@ module.exports = app => {
   
     // Create a new Receipt
     router.post("/", receipts.create);
-
-    // Create QR code 
-    //router.post("/", receipts.createQR)
     
     // Retrieve all Receipts
     router.get("/", receipts.findAll);

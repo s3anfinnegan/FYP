@@ -20,17 +20,6 @@ exports.create = (req, res) => {
     published: req.body.published ? req.body.published : false
   });
 
-  // Create a QR Code
-  /**const qrCodeData = req.body._id.toString(); // Use the Receipt's Object ID as the QR code data
-  QRCode.toDataURL(qrCodeData, function (err, qrCodeUrl) {
-    if (err) {
-      console.error(err);
-      return res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the QR Code."
-      });
-    }**/
-
   // Save Receipt in the database
   receipt
     .save(receipt)
@@ -44,6 +33,7 @@ exports.create = (req, res) => {
       });
     });
 };
+
 
 // Retrieve all Receipt from the database.
 exports.findAll = (req, res) => {
