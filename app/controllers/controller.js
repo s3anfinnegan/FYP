@@ -1,12 +1,10 @@
 const db = require("../models");
 const Receipt = db.receipts;
-const QRCode = require('qrcode');
-
 // Create and Save a new Receipt
 exports.create = (req, res) => {
   // Validate request
   if (!req.body.shop_name) {
-    res.status(400).send({ message: "Content can not be empty!" });
+    res.status(400).json({ message: "Content can not be empty!" });
     return;
   }
 
@@ -24,10 +22,10 @@ exports.create = (req, res) => {
   receipt
     .save(receipt)
     .then(data => {
-      res.send(data);
+      res.json(data);
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message:
           err.message || "Some error occurred while creating the Receipt."
       });
@@ -42,10 +40,10 @@ exports.findAll = (req, res) => {
 
   Receipt.find(condition)
     .then(data => {
-      res.send(data);
+      res.json(data);
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message:
           err.message || "Some error occurred while retrieving Receipts."
       });
@@ -59,20 +57,20 @@ exports.findOne = (req, res) => {
   Receipt.findById(id)
     .then(data => {
       if (!data)
-        res.status(404).send({ message: "Not found Receipt with id " + id });
-      else res.send(data);
+        res.status(404).json({ message: "Not found Receipt with id " + id });
+      else res.json(data);
     })
     .catch(err => {
       res
         .status(500)
-        .send({ message: "Error retrieving Receipt with id=" + id });
+        .json({ message: "Error retrieving Receipt with id=" + id });
     });
 };
 
 // Update a Receipt by the id in the request
 exports.update = (req, res) => {
   if (!req.body) {
-    return res.status(400).send({
+    return res.status(400).json({
       message: "Data to update can not be empty!"
     });
   }
@@ -82,13 +80,13 @@ exports.update = (req, res) => {
   Receipt.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then(data => {
       if (!data) {
-        res.status(404).send({
+        res.status(404).json({
           message: `Cannot update Receipt with id=${id}. Maybe Receipt was not found!`
         });
-      } else res.send({ message: "Receipt was updated successfully." });
+      } else res.json({ message: "Receipt was updated successfully." });
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message: "Error updating Receipt with id=" + id
       });
     });
@@ -101,17 +99,17 @@ exports.delete = (req, res) => {
   Receipt.findByIdAndRemove(id, { useFindAndModify: false })
     .then(data => {
       if (!data) {
-        res.status(404).send({
+        res.status(404).json({
           message: `Cannot delete Receipt with id=${id}. Maybe Receipt was not found!`
         });
       } else {
-        res.send({
+        res.json({
           message: "Receipt was deleted successfully!"
         });
       }
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message: "Could not delete Receipt with id=" + id
       });
     });
@@ -121,12 +119,12 @@ exports.delete = (req, res) => {
 exports.deleteAll = (req, res) => {
     Receipt.deleteMany({})
     .then(data => {
-      res.send({
+      res.json({
         message: `${data.deletedCount} Receipts were deleted successfully!`
       });
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message:
           err.message || "Some error occurred while removing all Receipts."
       });
@@ -137,10 +135,10 @@ exports.deleteAll = (req, res) => {
 exports.findAllPublished = (req, res) => {
     Receipt.find({ published: true })
     .then(data => {
-      res.send(data);
+      res.json(data);
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message:
           err.message || "Some error occurred while retrieving Receipts."
       });
