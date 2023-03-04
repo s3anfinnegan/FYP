@@ -1,5 +1,55 @@
 const db = require("../models");
 const Receipt = db.receipts;
+const nodemailer = require("nodemailer");
+
+// Send email with receipt details
+exports.sendEmail = (req, res) => {
+  const {
+    shop_name,
+    item1,
+    item2,
+    item3,
+    price1,
+    price2,
+    price3,
+    cashier,
+    email,
+  } = req.body;
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: `Receipt from ${shop_name}`,
+    html: `
+    <h1>Receipt from ${shop_name}</h1>
+    <p>Item 1: ${item1}, Price: $${price1}</p>
+    <p>Item 2: ${item2}, Price: $${price2}</p>
+    <p>Item 3: ${item3}, Price: $${price3}</p>
+    <p>Cashier: ${cashier}</p>
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log("Error sending email ", error);
+      res.status(500).send({
+        message: "Error sending email",
+      });
+    } else {
+      console.log("Email sent: " + info.response);
+      res.send("Email sent successfully!");
+    }
+  });
+};
+
 // Create and Save a new Receipt
 exports.create = (req, res) => {
   // Validate request

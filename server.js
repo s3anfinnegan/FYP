@@ -91,6 +91,9 @@ async function convertJsonToHtml(id) {
 // async..await is not allowed in global scope, must use a wrapper
 
 async function main() {
+  //app.post("http://localhost:8080/upload", async (req, res) => {
+  //  const { email, subject, message } = req.body;
+
   try {
     // create reusable transporter object using the default SMTP transport
 
@@ -132,11 +135,11 @@ async function main() {
       html: htmlConverted,
     });
 
-    // Preview only available when sending through an Ethereal account
     console.log("Email sent!");
   } catch (error) {
     console.error(error);
   }
+  //  });
 }
 
 main().catch(console.error);

@@ -6,6 +6,9 @@ module.exports = (app) => {
   // Retrieve the most recent receipt
   app.get("/api/receipts/latest", receipts.findLatest);
 
+  // Send email/ Upload expense
+  app.post("/upload", receipts.sendEmail);
+
   // Create a new Receipt
   router.post("/", receipts.create);
 
