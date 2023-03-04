@@ -54,7 +54,7 @@ async function convertJsonToHtml(id) {
   try {
     // Fetch receiptData data from the API
     const response = await axios.get(
-      "http://localhost:8080/api/receipts/63f7aa5ae9347beb7d495008"
+      "http://localhost:8080/api/receipts/latest"
     );
     const receiptData = response.data;
 

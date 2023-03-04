@@ -147,3 +147,18 @@ exports.findAllPublished = (req, res) => {
       });
     });
 };
+
+exports.findLatest = (req, res) => {
+  Receipt.find()
+    .sort({ createdAt: "desc" })
+    .limit(1)
+    .then((receipts) => {
+      res.send(receipts[0]);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving receipts.",
+      });
+    });
+};

@@ -3,6 +3,9 @@ module.exports = (app) => {
 
   var router = require("express").Router();
 
+  // Retrieve the most recent receipt
+  app.get("/api/receipts/latest", receipts.findLatest);
+
   // Create a new Receipt
   router.post("/", receipts.create);
 
