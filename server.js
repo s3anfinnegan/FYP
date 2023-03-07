@@ -91,55 +91,53 @@ async function convertJsonToHtml(id) {
 // async..await is not allowed in global scope, must use a wrapper
 
 async function main() {
-  //app.post("http://localhost:8080/upload", async (req, res) => {
-  //  const { email, subject, message } = req.body;
+  app.post("http://localhost:8080/upload", async (req, res) => {
+    try {
+      // create reusable transporter object using the default SMTP transport
 
-  try {
-    // create reusable transporter object using the default SMTP transport
-
-    let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: "seansfyp@gmail.com", // created a gmail account for the project
-        pass: "vtrunaehdzwzelsf", // using a generated app password for the project
-      },
-    });
-
-    const id = "63f7aa5ae9347beb7d495008";
-    const htmlConverted = await convertJsonToHtml(id);
-
-    const pdfPromise = new Promise((resolve, reject) => {
-      pdf.create(htmlConverted).toBuffer((err, buffer) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(buffer);
-        }
-      });
-    });
-
-    // send mail with defined transport object
-    await transporter.sendMail({
-      from: '"FYP Emailer" <seansfyp@gmail.com>', // sender address
-      to: "seansfyp@gmail.com", // list of receivers
-      subject: "New Expense!🧾", // Subject line
-      attachments: [
-        {
-          filename: "receipt.pdf",
-          content: await pdfPromise,
-          contentType: "application/pdf",
+      let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: "seansfyp@gmail.com", // created a gmail account for the project
+          pass: "vtrunaehdzwzelsf", // using a generated app password for the project
         },
-      ],
-      html: htmlConverted,
-    });
+      });
 
-    console.log("Email sent!");
-  } catch (error) {
-    console.error(error);
-  }
-  //  });
+      const id = "63f7aa5ae9347beb7d495008";
+      const htmlConverted = await convertJsonToHtml(id);
+
+      const pdfPromise = new Promise((resolve, reject) => {
+        pdf.create(htmlConverted).toBuffer((err, buffer) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(buffer);
+          }
+        });
+      });
+
+      // send mail with defined transport object
+      await transporter.sendMail({
+        from: '"FYP Emailer" <seansfyp@gmail.com>', // sender address
+        to: "seansfyp@gmail.com", // list of receivers
+        subject: "New Expense!🧾", // Subject line
+        attachments: [
+          {
+            filename: "receipt.pdf",
+            content: await pdfPromise,
+            contentType: "application/pdf",
+          },
+        ],
+        html: htmlConverted,
+      });
+
+      console.log("Email sent!");
+    } catch (error) {
+      console.error(error);
+    }
+  });
 }
 
 main().catch(console.error);
