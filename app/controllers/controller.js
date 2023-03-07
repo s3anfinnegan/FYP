@@ -1,51 +1,96 @@
 const db = require("../models");
 const Receipt = db.receipts;
 const nodemailer = require("nodemailer");
+const axios = require("axios");
+const pdf = require("html-pdf");
+
+// Function to convert JSON to HTML
+async function convertJsonToHtml(id) {
+  try {
+    // Fetch receiptData data from the API
+    const response = await axios.get(
+      "http://localhost:8080/api/receipts/latest"
+    );
+    const receiptData = response.data;
+
+    // Price and tax calculations
+    var itemA = parseFloat(receiptData.price1);
+    var itemB = parseFloat(receiptData.price2);
+    var itemC = parseFloat(receiptData.price3);
+    var totalPrice = itemA + itemB + itemC;
+    // Tax @ 23%
+    var totalTax = totalPrice * 0.23;
+
+    // Convert the expense data to HTML
+    const htmlConverted = `
+    <h1>${receiptData.shop_name}</h1>
+      <p>Time: ${receiptData.createdAt}</p>
+      <p>Item 1: ${receiptData.item1}</p>
+      <p>€ ${receiptData.price1}</p>
+      <p>Item 2: ${receiptData.item2}</p>
+      <p>€ ${receiptData.price2}</p>
+      <p>Item 3: ${receiptData.item3}</p>
+      <p>€ ${receiptData.price3}</p>
+    <p>Total: €${totalPrice.toFixed(2)}</p>
+    <p>Tax 23%: €${totalTax.toFixed(2)}</p>
+    <p>Your cashier: ${receiptData.cashier}</p>
+      <p>Have an amazing day!</p>
+    `;
+    return htmlConverted;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 // Send email with receipt details
 exports.sendEmail = (req, res) => {
-  try {
-    const { shop_name, item1, item2, item3, price1, price2, price3, cashier } =
-      req.body;
+  async function main() {
+    try {
+      // create reusable transporter object using the default SMTP transport
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "seansfyp@gmail.com", // created a gmail account for the project
-        pass: "vtrunaehdzwzelsf", // using a generated app password for the project
-      },
-    });
+      let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: "seansfyp2@gmail.com", // created a gmail account for the project
+          pass: "p/w goes here", // using a generated app password for the project
+        },
+      });
 
-    console.log(transporter);
-    const mailOptions = {
-      from: "seansfyp@gmail.com",
-      to: "sean2001finnegan@gmail.com",
-      subject: `Receipt from ${shop_name}`,
-      html: `
-    <h1>Receipt from ${shop_name}</h1>
-    <p>Item 1: ${item1}, Price: $${price1}</p>
-    <p>Item 2: ${item2}, Price: $${price2}</p>
-    <p>Item 3: ${item3}, Price: $${price3}</p>
-    <p>Cashier: ${cashier}</p>
-    `,
-    };
-    console.log(mailOptions);
+      const htmlConverted = await convertJsonToHtml();
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log("Error sending email ", error);
-        res.status(500).send({
-          message: "Error sending email",
+      const pdfPromise = new Promise((resolve, reject) => {
+        pdf.create(htmlConverted).toBuffer((err, buffer) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(buffer);
+          }
         });
-      } else {
-        console.log("Email sent: " + info.response);
-        res.send("Email sent successfully!");
-      }
-    });
-    console.log(this.sendMail);
-  } catch (error) {
-    console.log(error);
+      });
+      const pdfBuffer = await pdfPromise;
+      // send mail with defined transport object
+      transporter.sendMail({
+        from: '"FYP Emailer" <seansfyp2@gmail.com>', // sender address
+        to: "s.finnegan8@nuigalway.ie", // list of receivers
+        subject: "New Expense!🧾", // Subject line
+        attachments: [
+          {
+            filename: "receipt.pdf",
+            content: pdfBuffer,
+            contentType: "application/pdf",
+          },
+        ],
+        html: htmlConverted,
+      });
+
+      console.log("Email sent!");
+    } catch (error) {
+      console.log(error);
+    }
   }
+  main().catch(console.error);
 };
 
 // Create and Save a new Receipt
