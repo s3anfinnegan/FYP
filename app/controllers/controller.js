@@ -54,7 +54,7 @@ exports.sendEmail = (req, res) => {
         secure: false, // true for 465, false for other ports
         auth: {
           user: "seansfyp2@gmail.com", // created a gmail account for the project
-          pass: "xtnxtxorlkeziexm", // using a generated app password for the project
+          pass: "password goes here", // using a generated app password for the project
         },
       });
 
@@ -73,7 +73,7 @@ exports.sendEmail = (req, res) => {
       // send mail with defined transport object
       transporter.sendMail({
         from: '"FYP Emailer" <seansfyp2@gmail.com>', // sender address
-        to: "bills.oj0qs0.rn4kd038bsnhq3ur@xerofiles.com", // Xero email address
+        to: "email goes here", // Xero email address
         subject: "New Expense!🧾", // Subject line
         attachments: [
           {
